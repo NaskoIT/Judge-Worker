@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using JudgeWorker.Common;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,24 +29,9 @@ namespace JudgeWorker.Services
             }
 
             string body = model.ToJson();
-            var requestContent = new StringContent(body, Encoding.UTF8, ApplicationJson);
+            var requestContent = new StringContent(body, Encoding.UTF8, GlobalConstants.MimeTypes.ApplicationJson);
 
             return await Post<TResponse>(requestContent, url);
-        }
-
-        public async Task<TResponse> PostForm<TResponse>(MultipartFormDataContent form, string url)
-        {
-            if (form == null)
-            {
-                throw new ArgumentException(FormCannotBeNull);
-            }
-
-            if (string.IsNullOrEmpty(url))
-            {
-                throw new ArgumentException(UrlCannotBeNull);
-            }
-
-            return await Post<TResponse>(form, url);
         }
 
         public async Task<TResponse> Get<TResponse>(string url)
@@ -57,17 +41,11 @@ namespace JudgeWorker.Services
             return content.FromJson<TResponse>();
         }
 
-        public async Task<byte[]> Get(string url)
-        {
-            HttpResponseMessage responseMessage = await GetResponse(url);
-            return await responseMessage.Content.ReadAsByteArrayAsync();
-        }
-
         private async Task<HttpResponseMessage> GetResponse(string url)
         {
             if (string.IsNullOrEmpty(url))
             {
-                throw new ArgumentException(UrlCannotBeNull);
+                throw new ArgumentException("The url cannot be null!");
             }
 
             HttpResponseMessage responseMessage = await client.GetAsync(url);
@@ -98,7 +76,7 @@ namespace JudgeWorker.Services
                     errorMessage += Environment.NewLine + content;
                 }
 
-                throw new BusinessServiceException(errorMessage);
+                throw new InvalidOperationException(errorMessage);
             }
         }
     }
