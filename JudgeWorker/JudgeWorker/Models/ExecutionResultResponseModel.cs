@@ -1,4 +1,6 @@
-﻿namespace JudgeWorker.Models
+﻿using Newtonsoft.Json;
+
+namespace JudgeWorker.Models
 {
     public class ExecutionResultResponseModel
     {
@@ -10,7 +12,8 @@
 
         public string StdErr { get; set; }
 
-        public string Compile_Output { get; set; }
+        [JsonProperty("Compile_Output")]
+        public string CompileOutput { get; set; }
 
         public string Message { get; set; }
 
